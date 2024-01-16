@@ -1,3 +1,11 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    header('location:login.php');
+}
+?>
+
 <!DOCTYPE html>
 
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="assets/"
@@ -134,6 +142,12 @@
 
 
                 </ul>
+
+                <div class="d-flex justify-content-center w-100 mx-2 mb-3">
+                    <a href="proses/logout.php" class="btn btn-outline-danger w-75">Logout</a>
+                </div>
+
+
             </aside>
             <!-- / SIDEBAR -->
 

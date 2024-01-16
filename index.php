@@ -1,3 +1,12 @@
+<?php
+include 'proses/koneksi.php';
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    header('location:login.php');
+}
+?>
+
 <!DOCTYPE html>
 
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="assets/"
@@ -44,6 +53,17 @@
     <!-- CUSTOM JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
     <!-- CUSTOM JS -->
+
+
+    <style>
+        .truncate-text {
+            max-width: 150px;
+            /* Set the maximum width for the cell */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
 </head>
 
 <body>
@@ -102,7 +122,7 @@
                                 </g>
                             </svg>
                         </span>
-                        <span class="app-brand-text demo menu-text fw-bolder ms-2">Dashboard</span>
+                        <span class="demo menu-text fw-bolder ms-2">Metode KNN</span>
                     </a>
 
                     <a href="javascript:void(0);"
@@ -134,9 +154,12 @@
                         </a>
                     </li>
 
-
-
                 </ul>
+
+                <div class="d-flex justify-content-center w-100 mx-2 mb-3">
+                    <a href="proses/logout.php" class="btn btn-outline-danger w-75">Logout</a>
+                </div>
+
             </aside>
             <!-- / SIDEBAR -->
 
@@ -152,47 +175,132 @@
 
                     <!-- ISI CONTENT -->
                     <div class="container-xxl flex-grow-1 container-p-y">
-                        <div class="row">
 
-                            <!-- UPLOAD DATASET -->
-                            <div class="col-lg-12 mb-4 order-0">
-                                <div class="card">
-                                    <div class="d-flex align-items-end row">
-                                        <div class="col-sm-7">
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between">
-                                                    <h5 class="card-title text-primary">Import Dataset</h5>
-                                                    <a href="Dataset.xlsx" download="Dataset.xlsx"
-                                                        class="btn btn-sm btn-outline-primary"><i
-                                                            class="bx bx-download"></i> Download Contoh Dataset</a>
+
+                        <!-- TAB -->
+                        <div class="nav-align-top mb-4">
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="nav-item">
+                                    <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab"
+                                        data-bs-target="#importTab" aria-controls="importTab" aria-selected="false">
+                                        Import
+                                    </button>
+                                </li>
+                                <li class="nav-item">
+                                    <button type="button" class="nav-link " role="tab" data-bs-toggle="tab"
+                                        data-bs-target="#inputTab" aria-controls="inputTab" aria-selected="true">
+                                        Input
+                                    </button>
+                                </li>
+
+                            </ul>
+                            <div class="tab-content">
+
+                                <div class="tab-pane fade active show" id="importTab" role="tabpanel">
+                                    <!-- ISI IMPORT -->
+                                    <!-- UPLOAD DATASET -->
+                                    <div class="col-lg-12 mb-4 order-0">
+                                        <div class="card">
+                                            <div class="d-flex align-items-end row">
+                                                <div class="col-sm-7">
+                                                    <div class="card-body">
+                                                        <div class="d-flex justify-content-between">
+                                                            <h5 class="card-title text-primary">Import Dataset</h5>
+                                                            <a href="Dataset.xlsx" download="Dataset.xlsx"
+                                                                class="btn btn-sm btn-outline-primary"><i
+                                                                    class="bx bx-download"></i> Download Contoh
+                                                                Dataset</a>
+                                                        </div>
+                                                        <br>
+
+                                                        <form action="import.php" method="POST"
+                                                            enctype="multipart/form-data">
+                                                            <input type="file" required name="excel_file"
+                                                                class="form-control " accept=".xls, .xlsx"
+                                                                id="fileInput">
+                                                            <a onclick="importExcel()"
+                                                                class="btn btn-primary m-2 text-white">Import</a>
+
+                                                        </form>
+
+
+                                                    </div>
                                                 </div>
-                                                <br>
-
-                                                <form action="import.php" method="POST" enctype="multipart/form-data">
-                                                    <input type="file" required name="excel_file" class="form-control "
-                                                        accept=".xls, .xlsx" id="fileInput">
-                                                    <a onclick="importExcel()"
-                                                        class="btn btn-primary m-2 text-white">Import</a>
-
-                                                </form>
-
-
-
-
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-5 text-center text-sm-left">
-                                            <div class="card-body pb-0 px-0 px-md-4">
-                                                <img src="assets/img/illustrations/man-with-laptop-light.png"
-                                                    height="140" alt="View Badge User"
-                                                    data-app-dark-img="illustrations/man-with-laptop-dark.png"
-                                                    data-app-light-img="illustrations/man-with-laptop-light.png">
+                                                <div class="col-sm-5 text-center text-sm-left">
+                                                    <div class="card-body pb-0 px-0 px-md-4">
+                                                        <img src="assets/img/illustrations/man-with-laptop-light.png"
+                                                            height="140" alt="View Badge User"
+                                                            data-app-dark-img="illustrations/man-with-laptop-dark.png"
+                                                            data-app-light-img="illustrations/man-with-laptop-light.png">
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- UPLOAD DATASET -->
+                                    <!-- ISI IMPORT -->
+                                </div>
+                                <div class="tab-pane fade " id="inputTab" role="tabpanel">
+                                    <!-- ISI INPUT -->
+                                    <div class="table-responsive text-nowrap">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>ID</th>
+                                                    <th>Data</th>
+                                                    <th>Date</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+
+                                            <script>
+                                                function pilih_dataset(dataset) {
+                                                    sessionStorage.setItem('Dataset', dataset);
+                                                    location.reload();
+
+                                                }
+                                            </script>
+
+                                            <tbody class="table-border-bottom-0">
+                                                <?php
+                                                $no = 1;
+                                                $kueri = mysqli_query($conn, "SELECT * FROM dataset");
+                                                while ($row = mysqli_fetch_array($kueri)) {
+                                                    ?>
+                                                    <tr>
+                                                        <th>
+                                                            <?php echo $no; ?>
+                                                        </th>
+                                                        <th>
+                                                            <?php echo $row['id_dataset'] ?>
+                                                        </th>
+                                                        <th class="truncate-text" id="dataset_db<?php echo $no; ?>">
+                                                            <?php echo $row['data'] ?>
+                                                        </th>
+                                                        <th>
+                                                            <?php echo $row['date'] ?>
+                                                        </th>
+                                                        <th><a href="#"
+                                                                onclick="pilih_dataset(document.getElementById('dataset_db<?php echo $no++; ?>').innerText)"
+                                                                class="btn btn-primary btn-sm">Pilih</a></th>
+                                                    </tr>
+                                                <?php } ?>
+                                            </tbody>
+
+                                        </table>
+                                    </div>
+                                    <!-- ISI INPUT -->
                                 </div>
                             </div>
-                            <!-- UPLOAD DATASET -->
+                        </div>
+                        <!-- TAB -->
+
+                        <div class="row">
+
+
+
+
 
 
                             <!-- TAMBAH DATASET -->
@@ -259,11 +367,61 @@
                             </div>
                             <!-- TAMBAH DATASET -->
 
+                            <script>
+                                function unset() {
+                                    sessionStorage.clear();
+                                    location.href = 'index.php';
+                                }
+
+                                function simpan_dataset() {
+                                    var jsonData = JSON.parse(sessionStorage.getItem('Dataset'));
+
+                                    if (jsonData) {
+
+
+                                        fetch('proses/simpan_dataset.php', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                            },
+                                            body: JSON.stringify({ data: sessionStorage.getItem('Dataset') }),
+                                        })
+
+
+                                        Swal.fire({
+                                            title: "Berhasil",
+                                            text: "Dataset berhasil disimpan",
+                                            icon: "success"
+                                        }).then((result) => {
+                                            location.href = 'index.php';
+                                        });
+
+
+                                    } else {
+                                        Swal.fire({
+                                            title: "Gagal",
+                                            text: "Tidak ada Dataset",
+                                            icon: "warning"
+                                        });
+                                    }
+                                }
+                            </script>
+
                             <!-- TABLE DATASET -->
                             <div class="col-lg-12 mb-4 order-0">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h4 class="card-title text-primary">DATASET KNN</h4>
+                                        <div class="d-flex justify-content-between">
+                                            <h4 class="card-title text-primary">DATASET KNN</h4>
+                                            <div>
+                                                <a href="#" class="btn btn-outline-danger" id="btn_unset"
+                                                    onclick="unset()">Unset
+                                                    Dataset</a>
+                                                <a href="#" class="btn btn-outline-primary" id="btn_unset"
+                                                    onclick="simpan_dataset()">Simpan
+                                                    Dataset</a>
+                                            </div>
+                                        </div>
                                     </div>
                                     <hr>
                                     <div class="card-body">

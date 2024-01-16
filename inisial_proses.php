@@ -1,3 +1,11 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    header('location:login.php');
+}
+?>
+
 <!DOCTYPE html>
 
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="assets/"
@@ -111,7 +119,7 @@
                                 </g>
                             </svg>
                         </span>
-                        <span class="app-brand-text demo menu-text fw-bolder ms-2">Dashboard</span>
+                        <span class="demo menu-text fw-bolder ms-2">Metode KNN</span>
                     </a>
 
                     <a href="javascript:void(0);"
@@ -146,6 +154,12 @@
 
 
                 </ul>
+
+                <div class="d-flex justify-content-center w-100 mx-2 mb-3">
+                    <a href="proses/logout.php" class="btn btn-outline-danger w-75">Logout</a>
+                </div>
+
+
             </aside>
             <!-- / SIDEBAR -->
 
@@ -218,7 +232,7 @@
                                     htmlTable += '<thead>';
                                     htmlTable += '<tr class="text-center">';
                                     htmlTable += '<th class="bg-info text-white ">Atribut Info</th>';
-                                    htmlTable += `<th class="bg-warning text-white " colspan="${jsonData[0].length-2}">Atribut Pendukung</th>`;
+                                    htmlTable += `<th class="bg-warning text-white " colspan="${jsonData[0].length - 2}">Atribut Pendukung</th>`;
                                     htmlTable += '<th class="bg-primary text-white ">Label Target</th>';
                                     htmlTable += '</tr>';
                                     htmlTable += '</thead>';
